@@ -1,0 +1,9 @@
+OriginRequestPolicyConfig:  # [REQUIRED] An origin request policy configuration.
+  Comment: ''  # A comment to describe the origin request policy.
+  Name: 'react-app-s3-cloudfront-sam-originrequestpolicy' # [REQUIRED] A unique name to identify the origin request policy.
+  HeadersConfig: # [REQUIRED] The HTTP headers to include in origin requests.
+    HeaderBehavior: none  # [REQUIRED] Determines whether any HTTP headers are included in requests that CloudFront sends to the origin. Valid values are: none, whitelist, allViewer, allViewerAndWhitelistCloudFront, allExcept.
+  CookiesConfig: # [REQUIRED] The cookies from viewer requests to include in origin requests.
+    CookieBehavior: none  # [REQUIRED] Determines whether cookies in viewer requests are included in requests that CloudFront sends to the origin. Valid values are: none, whitelist, all, allExcept.
+  QueryStringsConfig: # [REQUIRED] The URL query strings from viewer requests to include in origin requests.
+    QueryStringBehavior: none  # [REQUIRED] Determines whether any URL query strings in viewer requests are included in requests that CloudFront sends to the origin. Valid values are: none, whitelist, all, allExcept.

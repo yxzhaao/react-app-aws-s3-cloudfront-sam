@@ -1,0 +1,13 @@
+CachePolicyConfig:  # [REQUIRED] A cache policy configuration.
+  Comment: ''  # A comment to describe the cache policy.
+  Name: 'react-app-s3-cloudfront-sam-cachepolicy' # [REQUIRED] A unique name to identify the cache policy.
+  MinTTL: 1 # [REQUIRED] The minimum amount of time, in seconds, that you want objects to stay in the CloudFront cache before CloudFront sends another request to the origin to see if the object has been updated.
+  ParametersInCacheKeyAndForwardedToOrigin: # The HTTP headers, cookies, and URL query strings to include in the cache key.
+    EnableAcceptEncodingGzip: true  # [REQUIRED] A flag that can affect whether the Accept-Encoding HTTP header is included in the cache key and included in requests that CloudFront sends to the origin.
+    EnableAcceptEncodingBrotli: true # A flag that can affect whether the Accept-Encoding HTTP header is included in the cache key and included in requests that CloudFront sends to the origin.
+    HeadersConfig: # [REQUIRED] An object that determines whether any HTTP headers (and if so, which headers) are included in the cache key and in requests that CloudFront sends to the origin.
+      HeaderBehavior: none  # [REQUIRED] Determines whether any HTTP headers are included in the cache key and in requests that CloudFront sends to the origin. Valid values are: none, whitelist.
+    CookiesConfig: # [REQUIRED] An object that determines whether any cookies in viewer requests (and if so, which cookies) are included in the cache key and in requests that CloudFront sends to the origin.
+      CookieBehavior: none  # [REQUIRED] Determines whether any cookies in viewer requests are included in the cache key and in requests that CloudFront sends to the origin. Valid values are: none, whitelist, allExcept, all.
+    QueryStringsConfig: # [REQUIRED] An object that determines whether any URL query strings in viewer requests (and if so, which query strings) are included in the cache key and in requests that CloudFront sends to the origin.
+      QueryStringBehavior: none  # [REQUIRED] Determines whether any URL query strings in viewer requests are included in the cache key and in requests that CloudFront sends to the origin. Valid values are: none, whitelist, allExcept, all.

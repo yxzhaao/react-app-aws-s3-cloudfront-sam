@@ -1,0 +1,84 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
+Description: >
+    Creates the infrastructure to host and expose a React Application:
+      - An Amazon S3 bucket for hosting the react application
+      - An Amazon CloudFront distribution to expose the application  
+
+Parameters:
+  AppName:
+    Type: String
+    Default: react-app-s3-cloudfront-sam
+
+Resources:
+  
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties: 
+      BucketName: !Sub '${AppName}-s3-bucket'
+      PublicAccessBlockConfiguration: 
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  S3BucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          # - Sid: PolicyForS3Bucket
+          #   Action: 
+          #     - 's3:GetBucketLocation'
+          #     - 's3:ListBucket'
+          #   Effect: Allow
+          #   Principal: 
+          #     AWS: !Sub "arn:aws:iam::${AWS::AccountId}"
+          #   Resource: 
+          #     - !Sub "arn:aws:s3:::${S3Bucket}"
+          - Sid: PolicyForCloudFrontPrivateContent
+            Action: 
+              - 's3:GetObject'
+            Effect: Allow
+            Principal: 
+              Service: cloudfront.amazonaws.com
+            Resource: 
+              - !Sub "arn:aws:s3:::${S3Bucket}/*"
+
+  CFOriginAccessControl:
+    Type: 'AWS::CloudFront::OriginAccessControl'
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub "${AppName}-origin-access-control"
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  CFDistribution:
+    Type: 'AWS::CloudFront::Distribution'
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName: !GetAtt S3Bucket.RegionalDomainName
+            Id: !Sub "${AppName}-s3-origin"
+            OriginAccessControlId: !GetAtt CFOriginAccessControl.Id
+            S3OriginConfig: {}
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+          TargetOriginId: !Sub "${AppName}-s3-origin"
+          CachePolicyId: b1e81410-251b-427e-98aa-c10c3dae0a15
+          OriginRequestPolicyId: 31c8970f-822f-4faf-b62b-5c2792051019
+          ViewerProtocolPolicy: redirect-to-https
+        DefaultRootObject: index.html
+        Enabled: true
+
+Outputs:
+  AppDomainName:
+    Description: "Domain name for the CloudFront distribution"
+    Value: !GetAtt CFDistribution.DomainName
